@@ -1,18 +1,25 @@
 pipeline {
     agent any
     stages {
+
         stage('Checkout') {
             steps { checkout scm }
         }
-        stage('Run PHP') {
-            steps { powershell 'php index.php' }
-        }
+
         stage('Install Dependencies') {
-            steps { powershell 'composer install' }
+            steps {
+                powershell 'composer install --no-interaction'
+            }
         }
+
         stage('Unit Test') {
-            steps { powershell 'php vendor\\bin\\phpunit tests' }
+            steps {
+                // Jika pakai Windows powershell
+                powershell 'php vendor\\bin\\phpunit tests'
+                // Jika pakai Linux agent, gunakan: sh 'vendor/bin/phpunit tests'
+            }
         }
+
     }
     post {
         success { echo 'Pipeline sukses dijalankan!' }
